@@ -87,5 +87,32 @@ local pipeline = Pipeline.new()
     :filter(function(val) return val % 2 == 0 end)
     :repeatStage(function(val) return val + 2 end, function(val) return val < 10 end)
 
-loca
+local result, ctx = pipeline:run(1)
+print(result)  -- Will process until condition fails
 ```
+
+### Hooks, Catch, and Finally
+
+```lua
+local pipeline = Pipeline.new()
+    :hooksFn({
+        beforeStage = function(label, val, ctx) print("Before", label, val) end,
+        afterStage = function(label, val, ctx) print("After", label, val) end
+    })
+    :catch(function(err, ctx) print("Error", err) return 0 end)
+    :finally(function(result, ctx) print("Pipeline finished with", result) end)
+```
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Implement your improvements
+3. Submit a pull request with a detailed description of changes
+
+---
+
+## License
+
+MIT License – Free to use, modify, and distribute.
