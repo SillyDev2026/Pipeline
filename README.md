@@ -103,6 +103,38 @@ local pipeline = Pipeline.new()
     :finally(function(result, ctx) print("Pipeline finished with", result) end)
 ```
 
+
+### example on how to create Folder to player
+```lua
+local PlayerData = Pipeline.new()
+	:step(function(player, context)
+		context.PlayerId = player.UserId
+		local leaderstats = Instance.new('Folder')
+		leaderstats.Name = 'leaderstats'
+		leaderstats.Parent = player
+		return leaderstats
+	end)
+	:step(function(data, context)
+		print("Stage result:", data)
+		print("Pipeline context:", context)
+	end)
+	:catch(function(err, ctx)
+		warn("Error in PlayerData pipeline:", err)
+	end)
+
+Players.PlayerAdded:Connect(function(player)
+	local success, ctx
+	local ok, result
+	ok, result = pcall(function()
+		result, ctx = PlayerData:run(player)
+	end)
+	if not ok then
+		warn("PlayerData pipeline error for", player.Name, ":", result)
+	end
+end)
+```
+it will print StageResult: leaderstats
+context: { PlayerId = id } 
 ---
 
 ## Contributing
